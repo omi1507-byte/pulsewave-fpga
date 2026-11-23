@@ -1,0 +1,24 @@
+Item,Designator,Qty,Manufacturer,MPN,LCSC Part #,DigiKey Part #,Package / Footprint,Value / Parameter,Description,Unit Price ($)
+1,"U1",1,"Lattice Semiconductor","LFE5U-25F-6BG256C","C2839446","220-2169-ND","CABGA-256 (14x14mm, 0.8mm pitch)","24k LUTs, 56 18x18 Multipliers, 1008 Kb SysMEM","ECP5 High-Performance FPGA",16.50
+2,"U2",1,"Winbond Electronics","W956A8MBYA5I","C2904561","W956A8MBYA5I-ND","BGA-24 (6x8mm)","64Mbit (8MB), 200MHz DDR, 1.8V","High-Speed HyperRAM Memory",2.85
+3,"U3",1,"FTDI Chip","FT232HQ-REEL","C11171","768-1188-1-ND","QFN-48 (7x7mm)","USB 2.0 High-Speed 480Mbps, Synchronous FIFO 40MB/s","High-Speed USB to FIFO/UART Bridge",4.20
+4,"U4, U5",2,"Texas Instruments","SN74AVC8T245RHLR","C88283","296-19416-2-ND","VQFN-24 (3.5x5.5mm)","Dual-Supply Bus Transceiver, 1.2V-3.6V, 380Mbps","8-Bit Level-Shifting High-Speed Transceiver",0.75
+5,"U6",1,"Texas Instruments","TPS62088YFPR","C206456","296-48866-2-ND","DSBGA-6 (0.8x1.2mm)","1.1V, 3A, 4MHz Step-Down Converter","FPGA Core Voltage DC-DC Regulator",0.65
+6,"U7",1,"Texas Instruments","TLV73333PDBVR","C129990","296-40660-2-ND","SOT-23-5","3.3V, 300mA, Low-Dropout (IQ 34uA)","VCCIO & Peripheral 3.3V LDO",0.18
+7,"U8",1,"Texas Instruments","TLV73325PDBVR","C145021","296-40658-2-ND","SOT-23-5","2.5V, 300mA, Low-Dropout","VCCAUX 2.5V LDO",0.18
+8,"U9",1,"Texas Instruments","TLV73318PDBVR","C145020","296-40656-2-ND","SOT-23-5","1.8V, 300mA, Low-Dropout","HyperRAM & VCCIO 1.8V LDO",0.18
+9,"U10",1,"Winbond Electronics","W25Q128JVSIQ","C97521","W25Q128JVSIQ-ND","SOIC-8 (208mil)","128Mbit SPI Flash, 133MHz Quad-SPI","FPGA Bitstream Configuration Memory",0.85
+10,"U11",1,"Microchip / Micrel","DSC1001DI1-025.0000","C287233","576-4657-2-ND","SMD-4 (2.5x2.0mm)","25.0000 MHz, 25ppm, 1.8V-3.3V","Primary FPGA Master Clock Oscillator",0.95
+11,"U12",1,"Texas Instruments","TMP1075DGKR","C433604","296-49487-1-ND","VSSOP-8","I2C Digital Temp Sensor, ±1°C accuracy","On-board PCB & FPGA Thermal Monitor",0.42
+12,"D1, D2, D3, D4, D5, D6, D7, D8",8,"STMicroelectronics","USBLC6-2SC6","C7519","497-5235-2-ND","SOT-23-6","ESD Protection 0.25pF, 15kV Air, 8kV Contact","Ultra-Low Capacitance Rail-to-Rail ESD Protection",0.16
+13,"J1",1,"Korean Hroparts / Molex","TYPE-C-31-M-12","C165948","WM12837CT-ND","16-Pin Mid-Mount SMD","USB Type-C Receptacle, 5A, USB 2.0/Power","Host USB Communication & 5V Power",0.32
+14,"J2, J3",2,"Samtec","TSW-108-07-G-S","C2892931","SAM1028-08-ND","Through-Hole 1x8 (2.54mm pitch)","Gold Plated Shrouded Header, 50Ω matching","16-Channel Logic Analyzer Probe Inputs",0.60
+15,"J4",1,"Harwin","M50-3500342","C124314","952-1376-ND","SMD 2x3 (1.27mm pitch)","JTAG Header (TDI, TDO, TCK, TMS, GND, VCC)","FPGA Debug & In-System Programming",0.45
+16,"L1",1,"Murata Electronics","DFE201610E-1R0M=P2","C385317","490-15106-2-ND","0806 (2.0x1.6mm)","1.0 uH, 3.5A, 48 mΩ DCR","Power Inductor for TPS62088 1.1V Core Buck",0.22
+17,"C1, C2, C3, C4",4,"Murata Electronics","GRM155R60J226ME11D","C96446","490-13221-2-ND","0402","22 uF, 6.3V, X5R, ±20%","Bulk Decoupling for DC-DC Output",0.04
+18,"C5..C24",20,"Murata Electronics","GRM155R71C104KA88D","C1525","490-1315-2-ND","0402","100 nF, 16V, X7R, ±10%","High-Frequency Decoupling for FPGA Balls",0.01
+19,"C25..C32",8,"Murata Electronics","GRM1555C1H100JA01D","C1431","490-1282-2-ND","0402","10 pF, 50V, C0G/NP0, ±5%","RF Tuning / Clock Oscillator Load Capacitors",0.01
+20,"R1..R16",16,"Yageo","RC0402FR-07100KL","C25744","311-100KLRTR-ND","0402","100 kΩ, 1/16W, 1%","Probe Input Pull-Down Termination Resistors",0.005
+21,"R17..R32",16,"Yageo","RC0402FR-0749R9L","C25114","311-49.9LRTR-ND","0402","49.9 Ω, 1/16W, 1%","Series Damping Resistors for Input Signal Lines",0.005
+22,"R33, R34",2,"Yageo","RC0402FR-075K1L","C25900","311-5.10KLRTR-ND","0402","5.1 kΩ, 1/16W, 1%","USB-C CC1/CC2 Pull-Down Resistors (UFP mode)",0.005
+23,"LED1, LED2, LED3, LED4",4,"Everlight","19-217/GHC-YR1S2/3T","C72044","1080-1361-2-ND","0603","Green/Blue/Amber/Red SMD LEDs, 20mA","Status (PWR, TRIG, CAPTURE, USB_ACT)",0.03

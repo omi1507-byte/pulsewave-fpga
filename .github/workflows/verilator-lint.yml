@@ -1,0 +1,62 @@
+name: FPGA RTL Lint & Golden Verification CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  verilator-lint:
+    name: Verilator RTL Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Verilator
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y verilator
+
+      - name: Run Verilator Lint
+        run: |
+          verilator --lint-only -Wall --top-module pulsewave_top \
+            rtl/src/sampling_frontend.sv \
+            rtl/src/trigger_engine.sv \
+            rtl/src/rle_compressor.sv \
+            rtl/src/sample_fifo.sv \
+            rtl/src/hyperram_ctrl.sv \
+            rtl/src/command_parser.sv \
+            rtl/src/usb_stream_interface.sv \
+            rtl/src/pulsewave_top.sv
+
+  python-golden-sim:
+    name: Bit-Accurate Golden Pipeline Simulation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r host/python/requirements.txt
+
+      - name: Execute Golden Simulation & VCD Generation
+        run: |
+          python rtl/sim/simulate_golden.py
+          python host/python/pulsewave_cli.py --rate 100000000 --samples 2000 --vcd ci_test.vcd
+
+      - name: Archive VCD Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulation-waveforms
+          path: |
+            rtl/sim/golden_output.vcd
+            ci_test.vcd

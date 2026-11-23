@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseWave-FPGA | Interactive Waveform Analyzer</title>
+    <style>
+        :root {
+            --bg-color: #0f141c;
+            --panel-bg: #18202c;
+            --border-color: #2b384e;
+            --accent-cyan: #00f0ff;
+            --accent-green: #00ff66;
+            --accent-amber: #ffb700;
+            --accent-purple: #bd00ff;
+            --text-main: #e2e8f0;
+            --text-dim: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", monospace;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: #000;
+            font-weight: 800;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        button {
+            background-color: #233044;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #2e3e57;
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        button.primary {
+            background: linear-gradient(135deg, #00f0ff, #0077ff);
+            color: #000;
+            font-weight: 700;
+            border: none;
+        }
+
+        button.primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .workspace {
+            display: flex;
+            flex: 1;
+            position: relative;
+        }
+
+        .channel-labels {
+            width: 140px;
+            background-color: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            z-index: 2;
+        }
+
+        .channel-tag {
+            height: 52px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dim);
+            justify-content: space-between;
+        }
+
+        .channel-tag .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .canvas-container {
+            flex: 1;
+            position: relative;
+            background-color: var(--bg-color);
+            cursor: crosshair;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        footer {
+            background-color: var(--panel-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 8px 24px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-dim);
+        }
+
+        .stats-span {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <h2>PulseWave-FPGA</h2>
+            <span class="badge">400 MSPS DDR</span>
+            <span style="font-size: 13px; color: var(--text-dim);">Open-Source Logic Analyzer Web Viewer</span>
+        </div>
+        <div class="controls">
+            <button onclick="zoom(1.25)">🔍 Zoom In (+)</button>
+            <button onclick="zoom(0.8)">🔍 Zoom Out (-)</button>
+            <button onclick="resetView()">Reset View</button>
+            <button class="primary" onclick="generateRandomCapture()">⚡ Re-Sample / Capture</button>
+        </div>
+    </header>
+
+    <div class="workspace">
+        <div class="channel-labels" id="channelLabels"></div>
+        <div class="canvas-container">
+            <canvas id="waveformCanvas"></canvas>
+        </div>
+    </div>
+
+    <footer>
+        <div>Sample Rate: <span class="stats-span" id="dispRate">200.0 MSPS (5.0 ns/div)</span> | RLE Compression: <span class="stats-span" id="dispRle">Active (18.4x ratio)</span></div>
+        <div>Time Cursor Δt: <span class="stats-span" id="dispDelta">--</span> | Freq: <span class="stats-span" id="dispFreq">--</span></div>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById("waveformCanvas");
+        const ctx = canvas.getContext("2d");
+        const channelLabelsDiv = document.getElementById("channelLabels");
+
+        const channelNames = [
+            { name: "CH0 (SCK)", color: "#00f0ff" },
+            { name: "CH1 (MOSI)", color: "#00ff66" },
+            { name: "CH2 (MISO)", color: "#ffb700" },
+            { name: "CH3 (CS#)", color: "#bd00ff" },
+            { name: "CH4 (SCL)", color: "#ff0055" },
+            { name: "CH5 (SDA)", color: "#00e1d9" },
+            { name: "CH6 (TX)", color: "#79c0ff" },
+            { name: "CH7 (RX)", color: "#d2a8ff" }
+        ];
+
+        let samples = [];
+        let viewOffset = 0;
+        let zoomLevel = 3.5; // pixels per sample
+
+        // Generate Channel Labels
+        channelNames.forEach((ch, idx) => {
+            const div = document.createElement("div");
+            div.className = "channel-tag";
+            div.innerHTML = `<span>${ch.name}</span><div class="dot" style="background-color: ${ch.color}"></div>`;
+            channelLabelsDiv.appendChild(div);
+        });
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            drawWaveforms();
+        }
+        window.addEventListener("resize", resizeCanvas);
+
+        function generateRandomCapture() {
+            samples = [];
+            let sck = 0, mosi = 0, miso = 0, cs = 1;
+            let scl = 1, sda = 1, tx = 1, rx = 1;
+
+            for (let i = 0; i < 2000; i++) {
+                if (i > 100 && i < 1600) {
+                    cs = 0;
+                    if (i % 8 === 0) sck = 1 - sck;
+                    if (i % 16 === 0) mosi = Math.random() > 0.5 ? 1 : 0;
+                    if (i % 16 === 8) miso = Math.random() > 0.5 ? 1 : 0;
+                } else {
+                    cs = 1;
+                    sck = 0;
+                }
+
+                if (i > 300 && i < 1800) {
+                    if (i % 24 === 0) scl = 1 - scl;
+                    if (i % 48 === 0) sda = Math.random() > 0.5 ? 1 : 0;
+                }
+
+                if (i % 64 === 0) tx = Math.random() > 0.5 ? 1 : 0;
+                if (i % 80 === 0) rx = Math.random() > 0.5 ? 1 : 0;
+
+                const word = (sck << 0) | (mosi << 1) | (miso << 2) | (cs << 3) |
+                             (scl << 4) | (sda << 5) | (tx << 6) | (rx << 7);
+                samples.push(word);
+            }
+            drawWaveforms();
+        }
+
+        function zoom(factor) {
+            zoomLevel = Math.max(0.5, Math.min(50, zoomLevel * factor));
+            drawWaveforms();
+        }
+
+        function resetView() {
+            viewOffset = 0;
+            zoomLevel = 3.5;
+            drawWaveforms();
+        }
+
+        function drawWaveforms() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Background Grid Lines
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
+            ctx.lineWidth = 1;
+            const gridSpacing = 50;
+            for (let x = 0; x < canvas.width; x += gridSpacing) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+
+            const channelHeight = 52;
+            const waveHeight = 24;
+
+            channelNames.forEach((ch, chIdx) => {
+                const yBase = chIdx * channelHeight + 38;
+                const yHigh = yBase - waveHeight;
+                const yLow = yBase;
+
+                // Horizontal Guide Line
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+                ctx.beginPath();
+                ctx.moveTo(0, yBase + 14);
+                ctx.lineTo(canvas.width, yBase + 14);
+                ctx.stroke();
+
+                // Draw Logic Traces
+                ctx.strokeStyle = ch.color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+
+                let prevBit = null;
+                for (let i = 0; i < samples.length; i++) {
+                    const x = i * zoomLevel - viewOffset;
+                    if (x < -10) continue;
+                    if (x > canvas.width + 10) break;
+
+                    const bit = (samples[i] >> chIdx) & 1;
+                    const y = bit ? yHigh : yLow;
+
+                    if (prevBit === null) {
+                        ctx.moveTo(x, y);
+                    } else if (prevBit !== bit) {
+                        ctx.lineTo(x, bit ? yLow : yHigh);
+                        ctx.lineTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                    prevBit = bit;
+                }
+                ctx.stroke();
+            });
+        }
+
+        generateRandomCapture();
+        setTimeout(resizeCanvas, 50);
+    </script>
+</body>
+</html>

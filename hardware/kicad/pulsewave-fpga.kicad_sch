@@ -1,0 +1,86 @@
+(kicad_sch (version 20231120) (generator eeschema)
+
+  (uuid 94101e40-a33f-4e0d-b8d4-53907a9b0c99)
+
+  (paper "A3")
+
+  (title_block
+    (title "PulseWave-FPGA: 16-Channel 400MSPS Logic Analyzer")
+    (date "2026-11-23")
+    (rev "v1.2")
+    (company "Open Source Hardware (OSHW)")
+    (comment 1 "Lattice ECP5-25F + 64Mb HyperRAM + FT232H USB 2.0 High-Speed")
+    (comment 2 "Target: Sigrok / PulseView Protocol Compatibility")
+  )
+
+  (lib_symbols
+    (symbol "Device:R" (pin_numbers hide) (pin_names (offset 0)) (in_bom yes) (on_board yes)
+      (property "Reference" "R" (at 2.032 0 90) (effects (font (size 1.27 1.27))))
+      (property "Value" "R" (at -2.032 0 90) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "R_0_1"
+        (rectangle (start -1.016 -2.54) (end 1.016 2.54) (stroke (width 0.254)) (fill (type none)))
+        (pin passive line (at 0 3.81 270) (length 1.27) (name "~" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at 0 -3.81 90) (length 1.27) (name "~" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+      )
+    )
+    (symbol "Connector:Conn_01x08_Pin" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
+      (property "Reference" "J" (at 0 11.43 0) (effects (font (size 1.27 1.27))))
+      (property "Value" "Conn_01x08_Pin" (at 0 -11.43 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "Conn_01x08_Pin_0_1"
+        (rectangle (start -1.27 -10.16) (end 1.27 10.16) (stroke (width 0.254)) (fill (type none)))
+        (pin passive line (at 3.81 8.89 180) (length 2.54) (name "CH0" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at 3.81 6.35 180) (length 2.54) (name "CH1" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at 3.81 3.81 180) (length 2.54) (name "CH2" (effects (font (size 1.27 1.27)))) (number "3" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at 3.81 1.27 180) (length 2.54) (name "CH3" (effects (font (size 1.27 1.27)))) (number "4" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at 3.81 -1.27 180) (length 2.54) (name "CH4" (effects (font (size 1.27 1.27)))) (number "5" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at 3.81 -3.81 180) (length 2.54) (name "CH5" (effects (font (size 1.27 1.27)))) (number "6" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at 3.81 -6.35 180) (length 2.54) (name "CH6" (effects (font (size 1.27 1.27)))) (number "7" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at 3.81 -8.89 180) (length 2.54) (name "CH7" (effects (font (size 1.27 1.27)))) (number "8" (effects (font (size 1.27 1.27)))))
+      )
+    )
+  )
+
+  (text "SECTION 1: 16-CHANNEL ANALOG FRONTEND & LEVEL TRANSLATION (SN74AVC8T245)"
+    (at 35.56 45.72 0)
+    (effects (font (size 2.54 2.54) bold))
+  )
+  (text "SECTION 2: LATTICE ECP5-25F FPGA CORE & PLL"
+    (at 152.4 45.72 0)
+    (effects (font (size 2.54 2.54) bold))
+  )
+  (text "SECTION 3: WINBOND 64MBIT HYPERRAM DEEP STORAGE (W956A8MBYA5I)"
+    (at 35.56 160.02 0)
+    (effects (font (size 2.54 2.54) bold))
+  )
+  (text "SECTION 4: FTDI FT232HQ HIGH-SPEED USB 2.0 FIFO (40MB/s SUSTAINED)"
+    (at 152.4 160.02 0)
+    (effects (font (size 2.54 2.54) bold))
+  )
+  (text "SECTION 5: LOW-NOISE POWER TREE (TPS62088 1.1V CORE + TLV733 LDOs)"
+    (at 260.0 45.72 0)
+    (effects (font (size 2.54 2.54) bold))
+  )
+
+  (symbol (lib_id "Connector:Conn_01x08_Pin") (at 35.56 70.0 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced yes)
+    (uuid 382b6a50-b8e7-4228-a400-0988636b1d10)
+    (property "Reference" "J2" (at 35.56 55.88 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "CH0-CH7 Header" (at 35.56 86.36 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical" (at 35.56 70.0 0) (effects (font (size 1.27 1.27)) hide))
+  )
+
+  (symbol (lib_id "Connector:Conn_01x08_Pin") (at 35.56 115.0 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced yes)
+    (uuid 482b6a50-b8e7-4228-a400-0988636b1d11)
+    (property "Reference" "J3" (at 35.56 100.88 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "CH8-CH15 Header" (at 35.56 131.36 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical" (at 35.56 115.0 0) (effects (font (size 1.27 1.27)) hide))
+  )
+
+  (sheet_instances
+    (path "/" (page "1"))
+  )
+)

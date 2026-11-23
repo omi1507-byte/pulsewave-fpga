@@ -1,0 +1,14 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Waveform and temporary simulation outputs
+*.vcd
+*.vvp
+*.vcd.hier
+
+# OS generated files
+.DS_Store
+*.swp
+*~
